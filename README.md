@@ -1,41 +1,25 @@
-# Quasar App (itc2024-2)
+# Описание
 
-A Quasar Project
+## Страницы
 
-## Install the dependencies
-```bash
-yarn
-# or
-npm install
-```
+- [Карта](http://localhost:9000/#/map)
 
-### Start the app in development mode (hot-code reloading, error reporting, etc.)
-```bash
-quasar dev
-```
+основная и единственная страница. содержит контент
 
+## Компоненты
 
-### Lint the files
-```bash
-yarn lint
-# or
-npm run lint
-```
+- Попап
 
+_в разработке_
 
-### Format the files
-```bash
-yarn format
-# or
-npm run format
-```
+отображает краткую информацию о сущности на карте
 
+## Хуки
 
+- useMap
 
-### Build the app for production
-```bash
-quasar build
-```
+инициализирует и фокусирует карту по id контейнера
 
-### Customize the configuration
-See [Configuring quasar.config.js](https://v2.quasar.dev/quasar-cli-vite/quasar-config-js).
+- usePoint
+
+создает точку

@@ -24,7 +24,7 @@ const usePoint = () => {
 
     const pointFeature = new Feature({
       geometry: point,
-      name: 'test',
+      name: name,
     });
 
     pointFeature.setStyle(pointStyle);

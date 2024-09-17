@@ -22,6 +22,7 @@ onMounted(() => {
   map.value.getLayers().push(
     new VectorLayer({
       source: new VectorSource({
+        // TODO: отрисовывать попап/открывать диалог по точкам. научиться вытаскивать их position
         features: [createPoint(60.56, 56.8, 'test')],
       }),
     })
