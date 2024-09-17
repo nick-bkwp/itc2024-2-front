@@ -1,5 +1,9 @@
 # Описание
 
+**Советую установить https://vscode.dev/github/nick-bkwp/itc2024-2-front/blob/mastere/extension и использовать todo для планирования**
+
+![alt text](image.png)
+
 ## Страницы
 
 - [Карта](http://localhost:9000/#/map)
