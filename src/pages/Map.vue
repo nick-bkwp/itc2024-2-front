@@ -4,28 +4,39 @@
   </q-page>
 </template>
 <script setup lang="ts">
-import Map from 'ol/Map.js';
-import OSM from 'ol/source/OSM.js';
-import TileLayer from 'ol/layer/Tile.js';
-import View from 'ol/View.js';
 import { onMounted, ref } from 'vue';
-import { fromLonLat } from 'ol/proj';
+import VectorLayer from 'ol/layer/Vector';
+import VectorSource from 'ol/source/Vector';
+import useMap from 'src/hooks/useMap';
+import usePoint from 'src/hooks/usePoint';
+import { Map } from 'ol';
 
 const map = ref<Map>();
 
+const { initMap } = useMap();
+const { createPoint } = usePoint();
+
 onMounted(() => {
-  map.value = new Map({
-    layers: [
-      new TileLayer({
-        source: new OSM(),
+  map.value = initMap('map');
+
+  map.value.getLayers().push(
+    new VectorLayer({
+      source: new VectorSource({
+        features: [createPoint(60.56, 56.8, 'test')],
       }),
-    ],
-    target: 'map',
-    view: new View({
-      center: fromLonLat([60.56, 56.8], 'EPSG:3857'),
-      zoom: 10,
-      projection: 'EPSG:3857',
-    }),
+    })
+  );
+
+  map.value.on('pointermove', (e) => {
+    const feature = map.value?.forEachFeatureAtPixel(
+      e.pixel,
+      function (feature, layer) {
+        return feature;
+      }
+    );
+    if (feature) {
+      console.log(feature.get('name'));
+    }
   });
 });
 </script>
