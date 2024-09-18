@@ -25,23 +25,41 @@
         icon="architecture"
       />
     </q-fab>
-    <q-btn
-      v-else
-      class="absolute-bottom-right q-ma-md"
-      round
-      color="primary"
-      icon="save"
-      @click="toggleDrawingMode"
-      ><q-tooltip
-        :offset="[10, 10]"
-        class="overflow-hidden"
-        self="center left"
-        anchor="center right"
-        ><p style="margin: 0; font-size: 16px; text-align: center">
-          Сохранить объект дороги
-        </p></q-tooltip
-      ></q-btn
-    >
+    <template v-else>
+      <q-btn
+        class="absolute-bottom-right q-ma-md"
+        round
+        color="negative"
+        icon="cancel"
+        style="margin-bottom: 80px"
+        @click="cancelDrawing"
+        ><q-tooltip
+          :offset="[10, 10]"
+          class="overflow-hidden"
+          self="center left"
+          anchor="center right"
+          ><p style="margin: 0; font-size: 16px; text-align: center">
+            Отменить создание
+          </p></q-tooltip
+        ></q-btn
+      >
+      <q-btn
+        class="absolute-bottom-right q-ma-md"
+        round
+        color="primary"
+        icon="save"
+        @click="toggleDrawingMode"
+        ><q-tooltip
+          :offset="[10, 10]"
+          class="overflow-hidden"
+          self="center left"
+          anchor="center right"
+          ><p style="margin: 0; font-size: 16px; text-align: center">
+            Сохранить объект дороги
+          </p></q-tooltip
+        ></q-btn
+      >
+    </template>
   </q-page>
 </template>
 <script setup>
@@ -57,33 +75,9 @@ import { Style, Stroke } from 'ol/style';
 import { useMapStore } from 'src/stores/map';
 import Popup from 'src/components/Popup.vue';
 import getRoads from 'src/api/getRoads';
-
-const geojsonData = {
-  type: 'FeatureCollection',
-  features: [
-    {
-      type: 'Feature',
-      geometry: {
-        type: 'MultiLineString',
-        coordinates: [
-          [
-            [-10, 40],
-            [-20, 45],
-            [-30, 50],
-          ],
-          [
-            [-15, 35],
-            [-25, 40],
-            [-35, 45],
-          ],
-        ],
-      },
-      properties: {
-        name: 'Example MultiLineString',
-      },
-    },
-  ],
-};
+import Feature from 'ol/Feature';
+import { MultiLineString } from 'ol/geom';
+import lineStyle from 'src/assets/style';
 
 const mapStore = useMapStore();
 
@@ -102,16 +96,33 @@ const vectorLayer = new VectorLayer({
   source: vectorSource,
 });
 
-const { toggleDrawingMode, handleKeyDown, isDrawing } = initDrawing(
-  map,
-  drawSource,
-  vectorSource
-);
+const { toggleDrawingMode, handleKeyDown, isDrawing, cancelDrawing } =
+  initDrawing(map, drawSource, vectorSource);
+
+const getRoadsData = () => {
+  getRoads().then((res) => {
+    res.map(({ geodata, id, ...obj }) => {
+      const commonData = obj['common-data'];
+      const allCoordinates = geodata.map(
+        ({ geometry }) => geometry.coordinates
+      )[0];
+      const multiLineString = new MultiLineString(allCoordinates);
+
+      const feature = new Feature({
+        geometry: multiLineString,
+        ...commonData,
+      });
+
+      feature.setId(id);
+      feature.setStyle(lineStyle);
+      feature.set('common-data', commonData);
+      vectorSource.addFeature(feature);
+    });
+  });
+};
 
 onMounted(() => {
-  getRoads().then((res) => {
-    console.log(res);
-  });
+  getRoadsData();
   map.value = initMap('map', [vectorLayer, drawLayer]);
   map.value.getLayers().push(
     new VectorLayer({
@@ -126,22 +137,6 @@ onMounted(() => {
       }),
     })
   );
-
-  vectorLayer.value = new VectorLayer({
-    source: new VectorSource({
-      features: new GeoJSON().readFeatures(geojsonData, {
-        featureProjection: 'EPSG:3857',
-      }),
-    }),
-    style: new Style({
-      stroke: new Stroke({
-        color: 'blue',
-        width: 2,
-      }),
-    }),
-  });
-
-  map.value?.addLayer(vectorLayer.value);
 
   map.value.on('click', (event) => {
     if (map.value) {

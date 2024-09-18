@@ -4,6 +4,7 @@ import { Ref, ref } from 'vue';
 import { LineString, MultiLineString } from 'ol/geom';
 import Draw from 'ol/interaction/Draw';
 import Feature from 'ol/Feature';
+import lineStyle from 'src/assets/style';
 
 const useDrawing = () => {
   const initDrawing = (
@@ -18,6 +19,13 @@ const useDrawing = () => {
       if (event.key === 'Escape' && drawInteraction) {
         drawInteraction.value.finishDrawing();
       }
+    };
+
+    const cancelDrawing = () => {
+      isDrawing.value = false;
+      drawInteraction.value.finishDrawing();
+      drawInteraction.value = null;
+      drawSource.clear();
     };
 
     const toggleDrawingMode = () => {
@@ -36,6 +44,7 @@ const useDrawing = () => {
           });
           const multiLineString = new MultiLineString(coordinates);
           const multiLineFeature = new Feature(multiLineString);
+          multiLineFeature.setStyle(lineStyle);
           vectorSource.addFeature(multiLineFeature);
           drawSource.clear();
         }
@@ -52,7 +61,7 @@ const useDrawing = () => {
       }
       isDrawing.value = !isDrawing.value;
     };
-    return { handleKeyDown, toggleDrawingMode, isDrawing };
+    return { handleKeyDown, toggleDrawingMode, isDrawing, cancelDrawing };
   };
   return { initDrawing };
 };

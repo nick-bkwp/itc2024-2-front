@@ -8,7 +8,6 @@ const getRoads = async () => {
           'TQ1JLdWGA1TCPm2x1mUqkOccCcwT//4a87n+Tqx4eGzSmHM5LmuxJT11mIR5IBoP5LDakUIelGHorz7L',
         accept: 'application/json',
         'Content-Type': 'application/json',
-        'Acces-Control-Allow-Origin': 'http://localhost:9000',
       },
     })
     .then((res) => {
