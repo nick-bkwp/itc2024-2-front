@@ -36,13 +36,42 @@ import View from 'ol/View';
 import TileLayer from 'ol/layer/Tile';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
-import OSM from 'ol/source/OSM';
-import Draw from 'ol/interaction/Draw';
 import useMap from 'src/hooks/useMap';
-import { MultiLineString } from 'ol/geom';
-import { Feature } from 'ol';
 import usePoint from 'src/hooks/usePoint';
 import useDrawing from 'src/hooks/useDrawing';
+import GeoJSON from 'ol/format/GeoJSON';
+import { Style, Stroke } from 'ol/style';
+import { useMapStore } from 'src/stores/map';
+import Popup from 'src/components/Popup.vue';
+
+const geojsonData = {
+  type: 'FeatureCollection',
+  features: [
+    {
+      type: 'Feature',
+      geometry: {
+        type: 'MultiLineString',
+        coordinates: [
+          [
+            [-10, 40],
+            [-20, 45],
+            [-30, 50],
+          ],
+          [
+            [-15, 35],
+            [-25, 40],
+            [-35, 45],
+          ],
+        ],
+      },
+      properties: {
+        name: 'Example MultiLineString',
+      },
+    },
+  ],
+};
+
+const mapStore = useMapStore();
 
 const { initMap } = useMap();
 const { initDrawing } = useDrawing();
@@ -67,7 +96,65 @@ const { toggleDrawingMode, handleKeyDown, isDrawing } = initDrawing(
 
 onMounted(() => {
   map.value = initMap('map', [vectorLayer, drawLayer]);
-  vectorSource.addFeature(createPoint(60.56, 56.8, 'test'));
+  map.value.getLayers().push(
+    new VectorLayer({
+      source: new VectorSource({
+        // TODO: отрисовывать попап/открывать диалог по точкам. научиться вытаскивать их position
+        features: [
+          createPoint(34.56, 53.2, 'Объект 1'),
+          createPoint(34.59, 53.19, 'Замена дорожного полотна'),
+          createPoint(34.56, 53.1, 'Расширение полосы'),
+          createPoint(34.68, 53.5, 'Ремонт повреждений'),
+        ],
+      }),
+    })
+  );
+
+  vectorLayer.value = new VectorLayer({
+    source: new VectorSource({
+      features: new GeoJSON().readFeatures(geojsonData, {
+        featureProjection: 'EPSG:3857',
+      }),
+    }),
+    style: new Style({
+      stroke: new Stroke({
+        color: 'blue',
+        width: 2,
+      }),
+    }),
+  });
+
+  map.value?.addLayer(vectorLayer.value);
+
+  map.value.on('click', (event) => {
+    if (map.value) {
+      const feature = map.value.forEachFeatureAtPixel(
+        event.pixel,
+        (feature) => {
+          return feature;
+        }
+      );
+
+      if (feature) {
+        mapStore.setSelectedObject(feature);
+      }
+    }
+  });
+
+  map.value.on('pointermove', (e) => {
+    const feature = map.value?.forEachFeatureAtPixel(
+      e.pixel,
+      function (feature, layer) {
+        return feature;
+      }
+    );
+    if (feature) {
+      mapStore.setHoveredObject(feature);
+      console.log(feature.get('name'));
+    } else {
+      mapStore.clearHoveredObject();
+    }
+  });
 
   window.addEventListener('keydown', handleKeyDown);
 });

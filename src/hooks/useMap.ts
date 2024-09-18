@@ -16,7 +16,7 @@ const useMap = () => {
       ],
       target: id,
       view: new View({
-        center: fromLonLat([60.56, 56.8], 'EPSG:3857'),
+        center: fromLonLat([34.56, 53.2], 'EPSG:3857'),
         zoom: 10,
         projection: 'EPSG:3857',
       }),

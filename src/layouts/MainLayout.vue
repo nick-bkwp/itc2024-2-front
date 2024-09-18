@@ -11,15 +11,15 @@
           @click="toggleLeftDrawer"
         />
 
-        <q-toolbar-title> Z-Ologie 😳😳😳 </q-toolbar-title>
+        <q-toolbar-title> Карта объектов </q-toolbar-title>
 
-        <div>Личный кабинет 😵‍💫😵‍💫😵‍💫</div>
+        <div><q-icon name="account_circle"></q-icon> ООО "Дорожные работы"</div>
       </q-toolbar>
     </q-header>
 
     <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
       <q-list>
-        <q-item-label header> Типа меню 😆😆😆 </q-item-label>
+        <q-item-label header> Инструменты </q-item-label>
 
         <EssentialLink
           v-for="link in linksList"
@@ -28,6 +28,8 @@
         />
       </q-list>
     </q-drawer>
+
+    <Sidebar />
 
     <q-page-container class="full-height">
       <router-view />
@@ -40,10 +42,14 @@ import { ref } from 'vue';
 import EssentialLink, {
   EssentialLinkProps,
 } from 'components/EssentialLink.vue';
+// import { useMapStore } from 'src/stores/map';
+import Sidebar from 'src/components/Sidebar.vue';
 
 defineOptions({
   name: 'MainLayout',
 });
+
+// const mapStore = useMapStore();
 
 const linksList: EssentialLinkProps[] = [
   {
