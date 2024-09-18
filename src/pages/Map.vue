@@ -37,8 +37,8 @@ import VectorSource from 'ol/source/Vector';
 import GeoJSON from 'ol/format/GeoJSON';
 import { Style, Stroke } from 'ol/style';
 
-const map = ref(null);
-const vectorLayer = ref(null);
+const map = ref<Map>();
+const vectorLayer = ref<VectorLayer>();
 
 const geojsonData = {
   type: 'FeatureCollection',
@@ -97,9 +97,11 @@ onMounted(() => {
   });
 
   map.value.on('click', (event) => {
-    map.value.forEachFeatureAtPixel(event.pixel, (feature) => {
-      alert(`Clicked on: ${feature.get('name')}`);
-    });
+    if (map.value) {
+      map.value.forEachFeatureAtPixel(event.pixel, (feature) => {
+        alert(`Clicked on: ${feature.get('name')}`);
+      });
+    }
   });
 });
 </script>
