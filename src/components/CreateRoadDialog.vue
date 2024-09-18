@@ -74,6 +74,8 @@ const props = defineProps({
   opened: Boolean,
 });
 
+const opened = ref(props.opened);
+
 const emits = defineEmits(['save']);
 
 const formData = ref({
@@ -83,6 +85,4 @@ const formData = ref({
   startDate: '',
   endDate: '',
 });
-
-const { opened } = toRefs(props);
 </script>
