@@ -1,6 +1,7 @@
 <template>
   <q-page class="row items-center justify-evenly">
     <div id="map" class="map"></div>
+    <Popup />
   </q-page>
 </template>
 <script setup lang="ts">
@@ -10,11 +11,14 @@ import VectorSource from 'ol/source/Vector';
 import useMap from 'src/hooks/useMap';
 import usePoint from 'src/hooks/usePoint';
 import { Map } from 'ol';
+import Popup from 'components/Popup.vue';
+import { useMapStore } from 'src/stores/map';
 
 const map = ref<Map>();
 
 const { initMap } = useMap();
 const { createPoint } = usePoint();
+const mapStore = useMapStore();
 
 onMounted(() => {
   map.value = initMap('map');
@@ -36,7 +40,10 @@ onMounted(() => {
       }
     );
     if (feature) {
+      mapStore.setHoveredObject(feature);
       console.log(feature.get('name'));
+    } else {
+      mapStore.clearHoveredObject();
     }
   });
 });
