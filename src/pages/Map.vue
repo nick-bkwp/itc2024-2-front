@@ -2,6 +2,27 @@
   <q-page class="row items-center justify-evenly">
     <div id="map" class="map"></div>
     <Popup />
+    <q-fab
+      class="absolute fab"
+      color="purple"
+      icon="keyboard_arrow_up"
+      direction="up"
+    >
+      <q-fab-action
+        external-label
+        label-position="left"
+        label="Создание объекта дороги"
+        color="primary"
+        icon="draw"
+      />
+      <q-fab-action
+        external-label
+        label-position="left"
+        label="Создание события реконструкции"
+        color="secondary"
+        icon="architecture"
+      />
+    </q-fab>
   </q-page>
 </template>
 <script setup lang="ts">
@@ -58,5 +79,10 @@ onMounted(() => {
   .ol-attribution {
     display: none;
   }
+}
+
+.fab {
+  bottom: 20px;
+  right: 20px;
 }
 </style>
