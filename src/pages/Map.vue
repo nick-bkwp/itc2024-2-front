@@ -1,6 +1,7 @@
 <template>
   <q-page class="row items-center justify-evenly">
     <div id="map" class="map"></div>
+    <Popup />
   </q-page>
 </template>
 <script setup lang="ts">
