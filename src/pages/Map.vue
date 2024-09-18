@@ -145,6 +145,7 @@ onMounted(() => {
     const feature = map.value?.forEachFeatureAtPixel(
       e.pixel,
       function (feature, layer) {
+        // TODO: исключить из обработки новую feature
         return feature;
       }
     );

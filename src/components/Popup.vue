@@ -29,6 +29,7 @@
   </transition>
 </template>
 <script setup lang="ts">
+import useMap from 'src/hooks/useMap';
 import { useMapStore } from 'src/stores/map';
 import { computed, ref, watch } from 'vue';
 
@@ -37,8 +38,10 @@ defineOptions({
 });
 
 const mapStore = useMapStore();
+const { map } = useMap();
 
 const objectId = ref('');
+const popupCords = ref([0, 0]);
 
 const isPopupShowed = computed(() => !!mapStore.hoveredObject);
 
@@ -48,7 +51,9 @@ const openObject = () => {
 
 watch(isPopupShowed, () => {
   if (mapStore.hoveredObject) {
-    console.log(mapStore.hoveredObject);
+    popupCords.value = map.value?.getPixelFromCoordinate(
+      (mapStore.hoveredObject as any).getGeometry().getCoordinates()
+    ) as Array<number>;
     objectId.value = (mapStore.hoveredObject as any).values_.name;
   }
 });
@@ -59,5 +64,7 @@ watch(isPopupShowed, () => {
   background-color: rgba(255, 255, 255, 0.7);
   border: 1px solid rgba(0, 0, 0, 0.2);
   border-radius: 10px;
+  top: v-bind('(popupCords[1] + 15) + "px"');
+  left: v-bind('popupCords[0] + "px"');
 }
 </style>
