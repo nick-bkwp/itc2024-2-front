@@ -1,11 +1,9 @@
 <template>
   <q-page class="row items-center justify-evenly">
-    <button @click="toggleDrawingMode" class="absolute-button">
-      {{ isDrawing ? 'Save' : 'Draw Line' }}
-    </button>
     <div id="map" class="map"></div>
     <Popup />
     <q-fab
+      v-if="!isDrawing"
       class="absolute fab"
       color="purple"
       icon="keyboard_arrow_up"
@@ -17,6 +15,7 @@
         label="Создание объекта дороги"
         color="primary"
         icon="draw"
+        @click="toggleDrawingMode"
       />
       <q-fab-action
         external-label
@@ -26,14 +25,28 @@
         icon="architecture"
       />
     </q-fab>
+    <q-btn
+      v-else
+      class="absolute-bottom-right q-ma-md"
+      round
+      color="primary"
+      icon="save"
+      @click="toggleDrawingMode"
+      ><q-tooltip
+        :offset="[10, 10]"
+        class="overflow-hidden"
+        self="center left"
+        anchor="center right"
+        ><p style="margin: 0; font-size: 16px; text-align: center">
+          Сохранить объект дороги
+        </p></q-tooltip
+      ></q-btn
+    >
   </q-page>
 </template>
 <script setup>
 import { onBeforeUnmount, onMounted, ref } from 'vue';
 import 'ol/ol.css';
-import Map from 'ol/Map';
-import View from 'ol/View';
-import TileLayer from 'ol/layer/Tile';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import useMap from 'src/hooks/useMap';
@@ -43,6 +56,7 @@ import GeoJSON from 'ol/format/GeoJSON';
 import { Style, Stroke } from 'ol/style';
 import { useMapStore } from 'src/stores/map';
 import Popup from 'src/components/Popup.vue';
+import getRoads from 'src/api/getRoads';
 
 const geojsonData = {
   type: 'FeatureCollection',
@@ -95,6 +109,9 @@ const { toggleDrawingMode, handleKeyDown, isDrawing } = initDrawing(
 );
 
 onMounted(() => {
+  getRoads().then((res) => {
+    console.log(res);
+  });
   map.value = initMap('map', [vectorLayer, drawLayer]);
   map.value.getLayers().push(
     new VectorLayer({
@@ -166,6 +183,8 @@ onBeforeUnmount(() => {
 </script>
 <style lang="scss" scoped>
 .map {
+  position: absolute;
+  top: -50px;
   width: 100%;
   height: 100vh;
 }
