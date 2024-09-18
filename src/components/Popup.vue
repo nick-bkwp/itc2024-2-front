@@ -15,6 +15,14 @@
           <div class="text-caption text-darkgrey">
             Заказчик: КУ "Управление автомобильных дорог Брянской области"
           </div>
+          <q-btn
+            unelevated
+            class="q-mt-md"
+            color="primary"
+            label="Подробнее"
+            align="center"
+            @click="openObject"
+          />
         </q-card-section>
       </q-card-section>
     </q-card>
@@ -33,6 +41,11 @@ const mapStore = useMapStore();
 const objectId = ref('');
 
 const isPopupShowed = computed(() => !!mapStore.hoveredObject);
+
+const openObject = () => {
+  mapStore.setSelectedObject(mapStore.hoveredObject);
+};
+
 watch(isPopupShowed, () => {
   if (mapStore.hoveredObject) {
     console.log(mapStore.hoveredObject);
@@ -46,6 +59,5 @@ watch(isPopupShowed, () => {
   background-color: rgba(255, 255, 255, 0.7);
   border: 1px solid rgba(0, 0, 0, 0.2);
   border-radius: 10px;
-  width: 40vw;
 }
 </style>

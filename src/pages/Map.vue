@@ -39,6 +39,7 @@ import { Style, Stroke } from 'ol/style';
 import useMap from 'src/hooks/useMap';
 import usePoint from 'src/hooks/usePoint';
 import { useMapStore } from 'src/stores/map';
+import Popup from 'src/components/Popup.vue';
 
 const { initMap } = useMap();
 const { createPoint } = usePoint();
@@ -81,7 +82,7 @@ onMounted(() => {
     new VectorLayer({
       source: new VectorSource({
         // TODO: отрисовывать попап/открывать диалог по точкам. научиться вытаскивать их position
-        features: [createPoint(60.56, 56.8, 'test')],
+        features: [createPoint(34.56, 53.2, 'test')],
       }),
     })
   );
@@ -104,9 +105,31 @@ onMounted(() => {
 
   map.value.on('click', (event) => {
     if (map.value) {
-      map.value.forEachFeatureAtPixel(event.pixel, (feature) => {
-        alert(`Clicked on: ${feature.get('name')}`);
-      });
+      const feature = map.value.forEachFeatureAtPixel(
+        event.pixel,
+        (feature) => {
+          return feature;
+        }
+      );
+
+      if (feature) {
+        mapStore.setSelectedObject(feature);
+      }
+    }
+  });
+
+  map.value.on('pointermove', (e) => {
+    const feature = map.value?.forEachFeatureAtPixel(
+      e.pixel,
+      function (feature, layer) {
+        return feature;
+      }
+    );
+    if (feature) {
+      mapStore.setHoveredObject(feature);
+      console.log(feature.get('name'));
+    } else {
+      mapStore.clearHoveredObject();
     }
   });
 });

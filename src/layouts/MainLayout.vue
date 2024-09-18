@@ -29,6 +29,8 @@
       </q-list>
     </q-drawer>
 
+    <Sidebar />
+
     <q-page-container class="full-height">
       <router-view />
     </q-page-container>
@@ -40,10 +42,14 @@ import { ref } from 'vue';
 import EssentialLink, {
   EssentialLinkProps,
 } from 'components/EssentialLink.vue';
+// import { useMapStore } from 'src/stores/map';
+import Sidebar from 'src/components/Sidebar.vue';
 
 defineOptions({
   name: 'MainLayout',
 });
+
+// const mapStore = useMapStore();
 
 const linksList: EssentialLinkProps[] = [
   {
