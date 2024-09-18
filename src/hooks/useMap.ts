@@ -29,7 +29,6 @@ const useMap = () => {
   };
 
   const getMap = () => {
-    debugger;
     return map.value;
   };
 
