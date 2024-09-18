@@ -64,7 +64,7 @@ watch(isPopupShowed, () => {
   background-color: rgba(255, 255, 255, 0.7);
   border: 1px solid rgba(0, 0, 0, 0.2);
   border-radius: 10px;
-  top: v-bind('(popupCords[1] + 15) + "px"');
-  left: v-bind('popupCords[0] + "px"');
+  top: v-bind('(popupCords[1] - 55) + "px"');
+  left: v-bind('popupCords[0] + 5 + "px"');
 }
 </style>

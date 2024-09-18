@@ -4,7 +4,6 @@ import TileLayer from 'ol/layer/Tile';
 import { fromLonLat } from 'ol/proj';
 import { OSM } from 'ol/source';
 import { reactive, ref } from 'vue';
-import useMapInitial from './useMapInitial';
 
 const map = ref<Map>();
 
