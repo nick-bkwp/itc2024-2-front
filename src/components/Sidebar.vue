@@ -50,6 +50,8 @@
 <script setup lang="ts">
 import { useMapStore } from 'src/stores/map';
 import { computed, onMounted, ref, watch } from 'vue';
+import getRoadInfo from 'src/api/getRoadInfo';
+import Feature from 'ol/Feature';
 
 const mapStore = useMapStore();
 
@@ -73,12 +75,10 @@ const loadData = () => {
 
 watch(isSidebarShowed, () => {
   if (mapStore.selectedObject) {
-    console.log(mapStore.selectedObject);
-    objectInfo.value = mapStore.getSelectedObjectInfo();
-    objectInfo.value = {
-      ...objectInfo.value,
-      ...loadData(),
-    };
+    const feature = mapStore.getSelectedObject() as unknown as Feature;
+    getRoadInfo(feature.getId() as string).then((res) => {
+      console.log(res);
+    });
   }
 });
 </script>

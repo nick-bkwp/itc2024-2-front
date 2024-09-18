@@ -22,10 +22,8 @@ export const useMapStore = defineStore('map', {
       this.selectedObject = null;
     },
 
-    getSelectedObjectInfo() {
-      return {
-        title: (this.selectedObject as any)?.values_?.name,
-      };
+    getSelectedObject() {
+      return this.selectedObject;
     },
   },
 });

@@ -7,13 +7,12 @@
     <q-card v-show="isPopupShowed" class="popup" flat bordered>
       <q-card-section horizontal>
         <q-card-section class="q-pt-xs">
-          <div class="text-overline">Паспорт объекта {{ objectId }}</div>
+          <div class="text-overline">Паспорт объекта</div>
           <div class="text-h6 q-mt-sm q-mb-xs">
-            Реконструкция автомобильной дороги на участке км. 3 + 300 - км. 41 +
-            150
+            {{ object.name }}
           </div>
           <div class="text-caption text-darkgrey">
-            Заказчик: КУ "Управление автомобильных дорог Брянской области"
+            {{ object.owner }}
           </div>
           <q-btn
             unelevated
@@ -29,6 +28,7 @@
   </transition>
 </template>
 <script setup lang="ts">
+import Feature from 'ol/Feature';
 import useMap from 'src/hooks/useMap';
 import { useMapStore } from 'src/stores/map';
 import { computed, ref, watch } from 'vue';
@@ -40,7 +40,7 @@ defineOptions({
 const mapStore = useMapStore();
 const { map } = useMap();
 
-const objectId = ref('');
+const object = ref({});
 const popupCords = ref([0, 0]);
 
 const isPopupShowed = computed(() => !!mapStore.hoveredObject);
@@ -54,7 +54,20 @@ watch(isPopupShowed, () => {
     popupCords.value = map.value?.getPixelFromCoordinate(
       (mapStore.hoveredObject as any).getGeometry().getCoordinates()
     ) as Array<number>;
-    objectId.value = (mapStore.hoveredObject as any).values_.name;
+    const feature = mapStore.hoveredObject as Feature;
+    if (feature.get('type') == 'road') {
+      const commonData = feature.get('common-data').fields;
+      object.value.name = commonData.find(
+        ({ code }) => code == 'FULL_NAME'
+      )?.value?.value;
+      object.value.owner = commonData
+        .find(({ code }) => code == 'ROAD_OWNER')
+        ?.value?.value?.at(-1)?.text;
+      console.log(commonData);
+    } else if (feature.get('type') == 'event') {
+      object.value.name = feature.get('name');
+      object.value.owner = 'Ремонт)';
+    }
   }
 });
 </script>

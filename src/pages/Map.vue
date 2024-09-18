@@ -116,6 +116,7 @@ const getRoadsData = () => {
       feature.setId(id);
       feature.setStyle(lineStyle);
       feature.set('common-data', commonData);
+      feature.set('type', 'road');
       vectorSource.addFeature(feature);
     });
   });

@@ -24,10 +24,11 @@ const usePoint = () => {
 
     const pointFeature = new Feature({
       geometry: point,
-      name: name,
     });
 
     pointFeature.setStyle(pointStyle);
+    pointFeature.set('name', name);
+    pointFeature.set('type', 'event');
 
     return pointFeature;
   };
