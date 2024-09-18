@@ -23,7 +23,6 @@ export const useMapStore = defineStore('map', {
     },
 
     getSelectedObjectInfo() {
-      debugger;
       return {
         title: (this.selectedObject as any)?.values_?.name,
       };

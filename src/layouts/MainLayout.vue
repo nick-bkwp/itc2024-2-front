@@ -12,7 +12,19 @@
         />
 
         <q-toolbar-title> Карта объектов </q-toolbar-title>
-
+        <q-input
+          v-model="search"
+          label="Поиск"
+          outlined
+          placeholder="Автодорога Р-242"
+          dense
+          class="q-mr-md"
+          color="white"
+        >
+          <template v-slot:before>
+            <q-icon name="search" />
+          </template>
+        </q-input>
         <div><q-icon name="account_circle"></q-icon> ООО "Дорожные работы"</div>
       </q-toolbar>
     </q-header>
@@ -48,6 +60,8 @@ import Sidebar from 'src/components/Sidebar.vue';
 defineOptions({
   name: 'MainLayout',
 });
+
+const search = ref();
 
 // const mapStore = useMapStore();
 
