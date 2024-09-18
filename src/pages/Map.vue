@@ -36,6 +36,13 @@ import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import GeoJSON from 'ol/format/GeoJSON';
 import { Style, Stroke } from 'ol/style';
+import useMap from 'src/hooks/useMap';
+import usePoint from 'src/hooks/usePoint';
+import { useMapStore } from 'src/stores/map';
+
+const { initMap } = useMap();
+const { createPoint } = usePoint();
+const mapStore = useMapStore();
 
 const map = ref<Map>();
 const vectorLayer = ref<VectorLayer>();
@@ -68,6 +75,17 @@ const geojsonData = {
 };
 
 onMounted(() => {
+  map.value = initMap('map');
+
+  map.value.getLayers().push(
+    new VectorLayer({
+      source: new VectorSource({
+        // TODO: отрисовывать попап/открывать диалог по точкам. научиться вытаскивать их position
+        features: [createPoint(60.56, 56.8, 'test')],
+      }),
+    })
+  );
+
   vectorLayer.value = new VectorLayer({
     source: new VectorSource({
       features: new GeoJSON().readFeatures(geojsonData, {
@@ -82,19 +100,7 @@ onMounted(() => {
     }),
   });
 
-  map.value = new Map({
-    target: 'map',
-    layers: [
-      new TileLayer({
-        source: new OSM(),
-      }),
-      vectorLayer.value,
-    ],
-    view: new View({
-      center: [0, 0],
-      zoom: 2,
-    }),
-  });
+  map.value?.addLayer(vectorLayer.value);
 
   map.value.on('click', (event) => {
     if (map.value) {
