@@ -11,15 +11,15 @@
           @click="toggleLeftDrawer"
         />
 
-        <q-toolbar-title> Z-Ologie 😳😳😳 </q-toolbar-title>
+        <q-toolbar-title> Карта объектов </q-toolbar-title>
 
-        <div>Личный кабинет 😵‍💫😵‍💫😵‍💫</div>
+        <div><q-icon name="account_circle"></q-icon> ООО "Дорожные работы"</div>
       </q-toolbar>
     </q-header>
 
     <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
       <q-list>
-        <q-item-label header> Типа меню 😆😆😆 </q-item-label>
+        <q-item-label header> Инструменты </q-item-label>
 
         <EssentialLink
           v-for="link in linksList"
