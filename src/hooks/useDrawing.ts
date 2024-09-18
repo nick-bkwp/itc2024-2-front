@@ -45,8 +45,10 @@ const useDrawing = () => {
           const multiLineString = new MultiLineString(coordinates);
           const multiLineFeature = new Feature(multiLineString);
           multiLineFeature.setStyle(lineStyle);
+          // здесь создается дорога
           vectorSource.addFeature(multiLineFeature);
           drawSource.clear();
+          return multiLineFeature;
         }
       } else {
         drawInteraction.value = new Draw({

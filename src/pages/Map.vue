@@ -2,6 +2,7 @@
   <q-page class="row items-center justify-evenly">
     <div id="map" class="map"></div>
     <Popup />
+    <CreateRoadDialog :opened="!!roadFeature" @save="createRoad" />
     <q-fab
       v-if="!isDrawing"
       class="absolute fab"
@@ -33,37 +34,45 @@
         icon="cancel"
         style="margin-bottom: 80px"
         @click="cancelDrawing"
-        ><q-tooltip
+      >
+        <q-tooltip
           :offset="[10, 10]"
           class="overflow-hidden"
           self="center left"
           anchor="center right"
-          ><p style="margin: 0; font-size: 16px; text-align: center">
+        >
+          <p style="margin: 0; font-size: 16px; text-align: center">
             Отменить создание
-          </p></q-tooltip
-        ></q-btn
-      >
+          </p>
+        </q-tooltip>
+      </q-btn>
       <q-btn
         class="absolute-bottom-right q-ma-md"
         round
         color="primary"
         icon="save"
-        @click="toggleDrawingMode"
-        ><q-tooltip
+        @click="
+          () => {
+            roadFeature = toggleDrawingMode();
+          }
+        "
+      >
+        <q-tooltip
           :offset="[10, 10]"
           class="overflow-hidden"
           self="center left"
           anchor="center right"
-          ><p style="margin: 0; font-size: 16px; text-align: center">
+        >
+          <p style="margin: 0; font-size: 16px; text-align: center">
             Сохранить объект дороги
-          </p></q-tooltip
-        ></q-btn
-      >
+          </p>
+        </q-tooltip>
+      </q-btn>
     </template>
   </q-page>
 </template>
 <script setup>
-import { onBeforeUnmount, onMounted, ref } from 'vue';
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import 'ol/ol.css';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
@@ -78,13 +87,15 @@ import getRoads from 'src/api/getRoads';
 import Feature from 'ol/Feature';
 import { MultiLineString } from 'ol/geom';
 import lineStyle from 'src/assets/style';
+import CreateRoadDialog from 'src/components/CreateRoadDialog.vue';
 
 const mapStore = useMapStore();
-
 const { initMap } = useMap();
 const { initDrawing } = useDrawing();
 const { createPoint } = usePoint();
+
 const map = ref();
+const roadFeature = ref();
 
 const drawSource = new VectorSource({ wrapX: false });
 const drawLayer = new VectorLayer({
@@ -119,6 +130,11 @@ const getRoadsData = () => {
       vectorSource.addFeature(feature);
     });
   });
+};
+
+const createRoad = (data) => {
+  console.log(data);
+  console.log(roadFeature.value);
 };
 
 onMounted(() => {
