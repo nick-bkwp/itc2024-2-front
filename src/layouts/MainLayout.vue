@@ -11,7 +11,7 @@
           @click="toggleLeftDrawer"
         />
 
-        <q-toolbar-title> Y-Ologie 😳😳😳 </q-toolbar-title>
+        <q-toolbar-title> Z-Ologie 😳😳😳 </q-toolbar-title>
 
         <div>Личный кабинет 😵‍💫😵‍💫😵‍💫</div>
       </q-toolbar>

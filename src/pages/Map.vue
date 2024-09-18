@@ -27,45 +27,79 @@
 </template>
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
+import 'ol/ol.css';
+import Map from 'ol/Map';
+import View from 'ol/View';
+import TileLayer from 'ol/layer/Tile';
+import OSM from 'ol/source/OSM';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
-import useMap from 'src/hooks/useMap';
-import usePoint from 'src/hooks/usePoint';
-import { Map } from 'ol';
-import Popup from 'components/Popup.vue';
-import { useMapStore } from 'src/stores/map';
+import GeoJSON from 'ol/format/GeoJSON';
+import { Style, Stroke } from 'ol/style';
 
-const map = ref<Map>();
+const map = ref(null);
+const vectorLayer = ref(null);
 
-const { initMap } = useMap();
-const { createPoint } = usePoint();
-const mapStore = useMapStore();
+const geojsonData = {
+  type: 'FeatureCollection',
+  features: [
+    {
+      type: 'Feature',
+      geometry: {
+        type: 'MultiLineString',
+        coordinates: [
+          [
+            [-10, 40],
+            [-20, 45],
+            [-30, 50],
+          ],
+          [
+            [-15, 35],
+            [-25, 40],
+            [-35, 45],
+          ],
+        ],
+      },
+      properties: {
+        name: 'Example MultiLineString',
+      },
+    },
+  ],
+};
 
 onMounted(() => {
-  map.value = initMap('map');
-
-  map.value.getLayers().push(
-    new VectorLayer({
-      source: new VectorSource({
-        // TODO: отрисовывать попап/открывать диалог по точкам. научиться вытаскивать их position
-        features: [createPoint(60.56, 56.8, 'test')],
+  vectorLayer.value = new VectorLayer({
+    source: new VectorSource({
+      features: new GeoJSON().readFeatures(geojsonData, {
+        featureProjection: 'EPSG:3857',
       }),
-    })
-  );
+    }),
+    style: new Style({
+      stroke: new Stroke({
+        color: 'blue',
+        width: 2,
+      }),
+    }),
+  });
 
-  map.value.on('pointermove', (e) => {
-    const feature = map.value?.forEachFeatureAtPixel(
-      e.pixel,
-      function (feature, layer) {
-        return feature;
-      }
-    );
-    if (feature) {
-      mapStore.setHoveredObject(feature);
-      console.log(feature.get('name'));
-    } else {
-      mapStore.clearHoveredObject();
-    }
+  map.value = new Map({
+    target: 'map',
+    layers: [
+      new TileLayer({
+        source: new OSM(),
+      }),
+      vectorLayer.value,
+    ],
+    view: new View({
+      center: [0, 0],
+      zoom: 2,
+    }),
+  });
+
+  map.value.on('click', (event) => {
+    map.value.forEachFeatureAtPixel(event.pixel, (feature) => {
+      alert(`Clicked on: ${feature.get('name')}`);
+    });
   });
 });
 </script>
