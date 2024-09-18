@@ -82,7 +82,12 @@ onMounted(() => {
     new VectorLayer({
       source: new VectorSource({
         // TODO: отрисовывать попап/открывать диалог по точкам. научиться вытаскивать их position
-        features: [createPoint(34.56, 53.2, 'test')],
+        features: [
+          createPoint(34.56, 53.2, 'Объект 1'),
+          createPoint(34.59, 53.19, 'Замена дорожного полотна'),
+          createPoint(34.56, 53.1, 'Расширение полосы'),
+          createPoint(34.68, 53.5, 'Ремонт повреждений'),
+        ],
       }),
     })
   );
