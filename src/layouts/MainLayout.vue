@@ -12,16 +12,20 @@
         />
 
         <q-toolbar-title> Карта объектов </q-toolbar-title>
+        <q-btn square icon="filter_alt" flat @click="toggleFilter" />
         <q-input
           v-model="search"
           label="Поиск"
-          outlined
+          filled
           placeholder="Автодорога Р-242"
           dense
-          class="q-mr-md"
+          class="q-mr-md q-pb-none"
           color="white"
+          standout
+          counter
+          clearable
         >
-          <template v-slot:before>
+          <template v-slot:prepend>
             <q-icon name="search" />
           </template>
         </q-input>
@@ -42,6 +46,7 @@
     </q-drawer>
 
     <Sidebar />
+    <Filter :opened="isFilterOpened" :filter="filter" />
 
     <q-page-container class="full-height">
       <router-view />
@@ -56,12 +61,14 @@ import EssentialLink, {
 } from 'components/EssentialLink.vue';
 // import { useMapStore } from 'src/stores/map';
 import Sidebar from 'src/components/Sidebar.vue';
+import Filter from 'src/components/Filter.vue';
 
 defineOptions({
   name: 'MainLayout',
 });
 
 const search = ref();
+const filter = ref({});
 
 // const mapStore = useMapStore();
 
@@ -80,8 +87,13 @@ const linksList: EssentialLinkProps[] = [
 ];
 
 const leftDrawerOpen = ref(false);
+const isFilterOpened = ref(false);
 
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;
 }
+
+const toggleFilter = () => {
+  isFilterOpened.value = !isFilterOpened.value;
+};
 </script>

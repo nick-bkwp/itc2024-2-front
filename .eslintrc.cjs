@@ -89,5 +89,7 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/': 'off',
     '@typescript-eslint/ban-ts-comment': 'off',
+    'vue/require-v-for-key': 'off',
+    'vue/valid-v-for': 'off',
   },
 };
