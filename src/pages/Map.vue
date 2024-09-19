@@ -96,6 +96,7 @@ import { lineStyle, boundaryStyle } from 'src/assets/style';
 import Point from 'ol/geom/Point';
 import CreateRoadDialog from 'src/components/CreateRoadDialog.vue';
 import CreateEventDialog from 'src/components/CreateEventDialog.vue';
+import getEventsInfo from 'src/api/getEventsInfo';
 
 const mapStore = useMapStore();
 const { initMap } = useMap();
@@ -270,6 +271,11 @@ watch(
 
 watch(isDrawing, () => {
   mapStore.toggleDrawing(isDrawing.value);
+});
+
+onMounted(async () => {
+  const data = await getEventsInfo();
+  console.log(data);
 });
 </script>
 
