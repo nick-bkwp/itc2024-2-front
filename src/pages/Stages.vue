@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// @ts-ignore
 import { stage1 } from 'src/assets/stages';
 import { ref } from 'vue';
 const stages = [{ name: 'Тестовый процесс', stage: stage1 }];
