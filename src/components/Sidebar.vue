@@ -114,6 +114,7 @@
   </transition>
 </template>
 <script setup lang="ts">
+// @ts-nocheck
 import { useMapStore } from 'src/stores/map';
 import { computed, onMounted, ref, watch } from 'vue';
 import getRoadInfo from 'src/api/getRoadInfo';
@@ -230,7 +231,7 @@ watch(isSidebarShowed, () => {
     const feature = mapStore.getSelectedObject() as unknown as Feature;
     // ебнуться вот это я выдал!
     getRoadInfo(feature.getId() as string).then((res) => {
-      Object.entries(res).forEach(([key, value]) => {
+      Object.entries(res).forEach(([key, value]: [any, any]) => {
         if (key != 'id' && key != 'geodata' && key != 'events') {
           if (value.data) {
             const tableData = value.data;

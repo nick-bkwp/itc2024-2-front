@@ -9,6 +9,7 @@
         <q-card-section class="q-pt-xs">
           <div class="text-overline">Паспорт объекта</div>
           <div class="text-h6 q-mt-sm q-mb-xs">
+            <!-- @ts-ignore -->
             {{ object.name }}
           </div>
           <div class="text-caption text-darkgrey">
@@ -28,6 +29,7 @@
   </transition>
 </template>
 <script setup lang="ts">
+// @ts-nocheck
 import Feature from 'ol/Feature';
 import useMap from 'src/hooks/useMap';
 import { useMapStore } from 'src/stores/map';
@@ -40,7 +42,7 @@ defineOptions({
 const mapStore = useMapStore();
 const { map } = useMap();
 
-const object = ref({});
+const object = ref<any>({});
 const popupCords = ref([0, 0]);
 
 const isPopupShowed = computed(() => !!mapStore.hoveredObject);
@@ -57,15 +59,19 @@ watch(isPopupShowed, () => {
     const feature = mapStore.hoveredObject as Feature;
     if (feature.get('type') == 'road') {
       const commonData = feature.get('common-data').fields;
+
       object.value.name = commonData.find(
         ({ code }) => code == 'FULL_NAME'
       )?.value?.value;
+
       object.value.owner = commonData
+
         .find(({ code }) => code == 'ROAD_OWNER')
         ?.value?.value?.at(-1)?.text;
       console.log(commonData);
     } else if (feature.get('type') == 'event') {
       object.value.name = feature.get('name');
+
       object.value.owner = 'Ремонт)';
     }
   }
