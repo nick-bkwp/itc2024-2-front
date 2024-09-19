@@ -2,6 +2,7 @@
   <q-page class="row items-center justify-evenly">
     <div id="map" class="map"></div>
     <Popup />
+    <CreateRoadDialog :opened="!!roadFeature" @save="createRoad" />
     <q-fab
       v-if="!isDrawing && !isStartingEvent"
       class="absolute fab"
@@ -40,28 +41,35 @@
           class="overflow-hidden"
           self="center left"
           anchor="center right"
-          ><p style="margin: 0; font-size: 16px; text-align: center">
+        >
+          <p style="margin: 0; font-size: 16px; text-align: center">
             Отменить создание
-          </p></q-tooltip
-        ></q-btn
-      >
+          </p>
+        </q-tooltip>
+      </q-btn>
       <q-btn
         v-if="!isStartingEvent"
         class="absolute-bottom-right q-ma-md"
         round
         color="primary"
         icon="save"
-        @click="toggleDrawingMode"
-        ><q-tooltip
+        @click="
+          () => {
+            roadFeature = toggleDrawingMode();
+          }
+        "
+      >
+        <q-tooltip
           :offset="[10, 10]"
           class="overflow-hidden"
           self="center left"
           anchor="center right"
-          ><p style="margin: 0; font-size: 16px; text-align: center">
+        >
+          <p style="margin: 0; font-size: 16px; text-align: center">
             Сохранить объект дороги
-          </p></q-tooltip
-        ></q-btn
-      >
+          </p>
+        </q-tooltip>
+      </q-btn>
     </template>
   </q-page>
 </template>
@@ -82,13 +90,15 @@ import Feature from 'ol/Feature';
 import { MultiLineString } from 'ol/geom';
 import { lineStyle, boundaryStyle } from 'src/assets/style';
 import Point from 'ol/geom/Point';
+import CreateRoadDialog from 'src/components/CreateRoadDialog.vue';
 
 const mapStore = useMapStore();
-
 const { initMap } = useMap();
 const { initDrawing } = useDrawing();
 const { createPoint } = usePoint();
+
 const map = ref();
+const roadFeature = ref();
 
 const drawSource = new VectorSource({ wrapX: false });
 const drawLayer = new VectorLayer({
@@ -132,6 +142,11 @@ const getRoadsData = () => {
       vectorSource.addFeature(feature);
     });
   });
+};
+
+const createRoad = (data) => {
+  console.log(data);
+  console.log(roadFeature.value);
 };
 
 onMounted(() => {
