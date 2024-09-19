@@ -4,7 +4,7 @@
     enter-active-class="animated fadeIn"
     leave-active-class="animated fadeOut"
   >
-    <div class="sidebar" v-show="isSidebarShowed">
+    <div class="sidebar" v-if="isSidebarShowed">
       <div class="row">
         <q-btn
           flat
