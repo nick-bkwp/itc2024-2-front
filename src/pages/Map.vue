@@ -12,6 +12,7 @@
       :id="eventData"
       @save="updateEvent"
     />
+    <Chat :opened="showChat" @close="() => (showChat = false)" />
     <q-fab
       v-if="!isDrawing && !isStartingEvent"
       class="absolute fab"
@@ -33,6 +34,7 @@
         label="Чат-бот"
         color="secondary"
         icon="forum"
+        @click="openChat"
       />
     </q-fab>
     <template v-else>
@@ -103,6 +105,7 @@ import CreateRoadDialog from 'src/components/CreateRoadDialog.vue';
 import CreateEventDialog from 'src/components/CreateEventDialog.vue';
 import getEventsInfo from 'src/api/getEventsInfo';
 import UpdateEventDialog from 'src/components/UpdateEventDialog.vue';
+import Chat from 'src/components/Chat.vue';
 
 const mapStore = useMapStore();
 const { initMap } = useMap();
@@ -112,6 +115,7 @@ const { createPoint } = usePoint();
 const map = ref();
 const roadFeature = ref();
 const eventData = ref(null);
+const showChat = ref(false);
 
 const drawSource = new VectorSource({ wrapX: false });
 const drawLayer = new VectorLayer({
@@ -275,6 +279,10 @@ const handlerDiscardEvent = () => {
   });
   placedEventFeatures.value = [];
   mapStore.endEvent();
+};
+
+const openChat = () => {
+  showChat.value = !showChat.value;
 };
 
 watch(
