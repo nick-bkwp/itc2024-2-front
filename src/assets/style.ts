@@ -1,4 +1,4 @@
-import { Style, Stroke } from 'ol/style';
+import { Style, Stroke, Circle, Fill } from 'ol/style';
 
 const lineStyle = new Style({
   stroke: new Stroke({
@@ -7,4 +7,11 @@ const lineStyle = new Style({
   }),
 });
 
-export default lineStyle;
+const boundaryStyle = new Style({
+  image: new Circle({
+    radius: 8,
+    fill: new Fill({ color: 'yellow' }),
+  }),
+});
+
+export { lineStyle, boundaryStyle };

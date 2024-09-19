@@ -4,6 +4,7 @@ export const useMapStore = defineStore('map', {
   state: () => ({
     hoveredObject: null,
     selectedObject: null,
+    startingEvent: false,
   }),
   actions: {
     setHoveredObject(hoveredObject: any) {
@@ -24,6 +25,14 @@ export const useMapStore = defineStore('map', {
 
     getSelectedObject() {
       return this.selectedObject;
+    },
+
+    startEvent() {
+      this.startingEvent = true;
+    },
+
+    endEvent() {
+      this.startingEvent = false;
     },
   },
 });

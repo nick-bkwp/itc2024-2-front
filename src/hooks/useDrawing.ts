@@ -4,7 +4,7 @@ import { Ref, ref } from 'vue';
 import { LineString, MultiLineString } from 'ol/geom';
 import Draw from 'ol/interaction/Draw';
 import Feature from 'ol/Feature';
-import lineStyle from 'src/assets/style';
+import { lineStyle } from 'src/assets/style';
 
 const useDrawing = () => {
   const initDrawing = (
@@ -16,7 +16,7 @@ const useDrawing = () => {
     const drawInteraction = ref();
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && drawInteraction) {
+      if (event.key === 'Escape' && drawInteraction.value) {
         drawInteraction.value.finishDrawing();
       }
     };

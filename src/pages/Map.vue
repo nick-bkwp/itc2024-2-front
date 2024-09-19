@@ -3,7 +3,7 @@
     <div id="map" class="map"></div>
     <Popup />
     <q-fab
-      v-if="!isDrawing"
+      v-if="!isDrawing && !isStartingEvent"
       class="absolute fab"
       color="purple"
       icon="keyboard_arrow_up"
@@ -20,9 +20,9 @@
       <q-fab-action
         external-label
         label-position="left"
-        label="Создание события реконструкции"
+        label="Чат-бот"
         color="secondary"
-        icon="architecture"
+        icon="forum"
       />
     </q-fab>
     <template v-else>
@@ -32,7 +32,9 @@
         color="negative"
         icon="cancel"
         style="margin-bottom: 80px"
-        @click="cancelDrawing"
+        @click="
+          () => (isStartingEvent ? handlerDiscardEvent() : cancelDrawing())
+        "
         ><q-tooltip
           :offset="[10, 10]"
           class="overflow-hidden"
@@ -44,6 +46,7 @@
         ></q-btn
       >
       <q-btn
+        v-if="!isStartingEvent"
         class="absolute-bottom-right q-ma-md"
         round
         color="primary"
@@ -63,7 +66,7 @@
   </q-page>
 </template>
 <script setup>
-import { onBeforeUnmount, onMounted, ref } from 'vue';
+import { onBeforeUnmount, onMounted, ref, computed, watch } from 'vue';
 import 'ol/ol.css';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
@@ -77,7 +80,8 @@ import Popup from 'src/components/Popup.vue';
 import getRoads from 'src/api/getRoads';
 import Feature from 'ol/Feature';
 import { MultiLineString } from 'ol/geom';
-import lineStyle from 'src/assets/style';
+import { lineStyle, boundaryStyle } from 'src/assets/style';
+import Point from 'ol/geom/Point';
 
 const mapStore = useMapStore();
 
@@ -95,6 +99,14 @@ const vectorSource = new VectorSource({ wrapX: false });
 const vectorLayer = new VectorLayer({
   source: vectorSource,
 });
+
+const eventSource = new VectorSource({ wrapX: false });
+const eventLayer = new VectorLayer({
+  source: eventSource,
+});
+
+const movingEventFeature = ref(new Feature(new Point([0, 0]))); // точка, летающая вдоль дороги, которую выбрали для основы ивента
+const placedEventFeatures = ref([]); // хранит все точки, поставленные в режиме создания ивента как баундерис
 
 const { toggleDrawingMode, handleKeyDown, isDrawing, cancelDrawing } =
   initDrawing(map, drawSource, vectorSource);
@@ -124,7 +136,7 @@ const getRoadsData = () => {
 
 onMounted(() => {
   getRoadsData();
-  map.value = initMap('map', [vectorLayer, drawLayer]);
+  map.value = initMap('map', [vectorLayer, drawLayer, eventLayer]);
   map.value.getLayers().push(
     new VectorLayer({
       source: new VectorSource({
@@ -141,32 +153,57 @@ onMounted(() => {
 
   map.value.on('click', (event) => {
     if (map.value) {
-      const feature = map.value.forEachFeatureAtPixel(
-        event.pixel,
-        (feature) => {
-          return feature;
-        }
-      );
+      if (isStartingEvent.value) {
+        const finalPosition = movingEventFeature.value
+          .getGeometry()
+          .getCoordinates();
+        console.log('Feature placed at:', finalPosition);
+        const finalFeature = movingEventFeature.value.clone();
+        finalFeature.set('type', 'event-boundary'); // !!!
+        finalFeature.setStyle(boundaryStyle);
+        eventSource.addFeature(finalFeature);
+        placedEventFeatures.value.push(finalFeature);
+        console.log(placedEventFeatures.value);
+      } else {
+        const feature = map.value.forEachFeatureAtPixel(
+          event.pixel,
+          (feature) => {
+            return feature;
+          }
+        );
 
-      if (feature) {
-        mapStore.setSelectedObject(feature);
+        if (feature) {
+          mapStore.setSelectedObject(feature);
+        }
       }
     }
   });
 
   map.value.on('pointermove', (e) => {
-    const feature = map.value?.forEachFeatureAtPixel(
-      e.pixel,
-      function (feature, layer) {
-        // TODO: исключить из обработки новую feature
-        return feature;
+    if (map.value) {
+      if (isStartingEvent.value) {
+        const multiLineString = mapStore.selectedObject;
+        const coordinate = e.coordinate;
+        const closestPoint = multiLineString
+          .getGeometry()
+          .getClosestPoint(coordinate);
+        movingEventFeature.value.getGeometry().setCoordinates(closestPoint);
+      } else {
+        const feature = map.value?.forEachFeatureAtPixel(
+          e.pixel,
+          function (feature, layer) {
+            // TODO: исключить из обработки новую feature
+            return feature;
+          }
+        );
+        if (feature) {
+          mapStore.setHoveredObject(feature);
+          // TODO: рисовать попап немного выше, чем прямо под курсором
+          // TODO: BUG если перейти с попапа на сайдбар, не трогая карту, то попап останется висеть
+        } else {
+          mapStore.clearHoveredObject();
+        }
       }
-    );
-    if (feature) {
-      mapStore.setHoveredObject(feature);
-      console.log(feature.get('name'));
-    } else {
-      mapStore.clearHoveredObject();
     }
   });
 
@@ -176,7 +213,45 @@ onMounted(() => {
 onBeforeUnmount(() => {
   window.removeEventListener('keydown', handleKeyDown);
 });
+
+const isStartingEvent = computed(() => mapStore.startingEvent);
+
+watch(isStartingEvent, () => {
+  // вошли в режим создания ивента
+  if (isStartingEvent.value) {
+    eventSource.addFeature(movingEventFeature.value);
+  }
+});
+
+const handlerCreateEvent = () => {
+  movingEventFeature.value = new Feature(new Point([0, 0]));
+  // TODO: вот в ЭТОМ месте вызывать диалог с информацией по ивенту, передавать туда placedEventFeatures;
+  placedEventFeatures.value = [];
+  mapStore.endEvent();
+};
+
+const handlerDiscardEvent = () => {
+  movingEventFeature.value = new Feature(new Point([0, 0]));
+  placedEventFeatures.value.forEach((feature) => {
+    console.log(feature);
+    eventSource.removeFeature(feature);
+  });
+  placedEventFeatures.value = [];
+  mapStore.endEvent();
+};
+
+watch(
+  placedEventFeatures,
+  () => {
+    // если поставил две баундерис, то создаем автоматически
+    if (placedEventFeatures.value.length == 2) {
+      handlerCreateEvent();
+    }
+  },
+  { deep: true }
+);
 </script>
+
 <style lang="scss" scoped>
 .map {
   position: absolute;
