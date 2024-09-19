@@ -217,7 +217,6 @@ onMounted(() => {
         );
         if (feature) {
           mapStore.setHoveredObject(feature);
-          // TODO: рисовать попап немного выше, чем прямо под курсором
         } else {
           mapStore.clearHoveredObject();
         }
@@ -243,7 +242,7 @@ watch(isStartingEvent, () => {
 
 const handlerCreateEvent = () => {
   movingEventFeature.value = new Feature(new Point([0, 0]));
-  // TODO: вот в ЭТОМ месте вызывать диалог с информацией по ивенту, передавать туда placedEventFeatures;
+  // TODO: сохранение на бэк
   // placedEventFeatures.value = [];
   // mapStore.endEvent();
 };
