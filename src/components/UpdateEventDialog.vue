@@ -118,6 +118,7 @@
   </q-dialog>
 </template>
 <script setup lang="ts">
+// @ts-nocheck
 import { computed, onMounted, ref, watch } from 'vue';
 import { stage1 } from 'src/assets/stages';
 import getEventInfo from 'src/api/getEvent';

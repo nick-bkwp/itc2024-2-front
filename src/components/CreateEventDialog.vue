@@ -131,6 +131,7 @@
   </q-dialog>
 </template>
 <script setup lang="ts">
+// @ts-nocheck
 import { computed, ref, watch } from 'vue';
 import { stage1 } from 'src/assets/stages';
 

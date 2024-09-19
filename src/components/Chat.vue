@@ -76,5 +76,7 @@ const sendMessage = async () => {
   bottom: 20px;
   left: 20px;
   max-width: 500px;
+  max-height: 90%;
+  overflow-y: auto;
 }
 </style>
