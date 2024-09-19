@@ -215,6 +215,7 @@ onMounted(() => {
           mapStore.setHoveredObject(feature);
           // TODO: рисовать попап немного выше, чем прямо под курсором
           // TODO: BUG если перейти с попапа на сайдбар, не трогая карту, то попап останется висеть
+          // TODO: фантомный попап на точке при создании новой дороги
         } else {
           mapStore.clearHoveredObject();
         }
