@@ -5,10 +5,13 @@ export const useMapStore = defineStore('map', {
     hoveredObject: null,
     selectedObject: null,
     startingEvent: false,
+    isDrawing: false,
   }),
   actions: {
     setHoveredObject(hoveredObject: any) {
-      this.hoveredObject = hoveredObject;
+      if (!this.isDrawing) {
+        this.hoveredObject = hoveredObject;
+      }
     },
 
     clearHoveredObject() {
@@ -16,7 +19,10 @@ export const useMapStore = defineStore('map', {
     },
 
     setSelectedObject(selectedObject: any) {
-      this.selectedObject = selectedObject;
+      if (!this.isDrawing) {
+        this.selectedObject = selectedObject;
+        this.clearHoveredObject();
+      }
     },
 
     clearSelectedObject() {
@@ -33,6 +39,10 @@ export const useMapStore = defineStore('map', {
 
     endEvent() {
       this.startingEvent = false;
+    },
+
+    toggleDrawing(value: boolean) {
+      this.isDrawing = value;
     },
   },
 });

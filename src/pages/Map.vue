@@ -3,6 +3,10 @@
     <div id="map" class="map"></div>
     <Popup />
     <CreateRoadDialog :opened="!!roadFeature" @save="createRoad" />
+    <CreateEventDialog
+      :opened="placedEventFeatures.length === 2"
+      @save="createRoad"
+    />
     <q-fab
       v-if="!isDrawing && !isStartingEvent"
       class="absolute fab"
@@ -91,6 +95,7 @@ import { MultiLineString } from 'ol/geom';
 import { lineStyle, boundaryStyle } from 'src/assets/style';
 import Point from 'ol/geom/Point';
 import CreateRoadDialog from 'src/components/CreateRoadDialog.vue';
+import CreateEventDialog from 'src/components/CreateEventDialog.vue';
 
 const mapStore = useMapStore();
 const { initMap } = useMap();
@@ -155,7 +160,6 @@ onMounted(() => {
   map.value.getLayers().push(
     new VectorLayer({
       source: new VectorSource({
-        // TODO: отрисовывать попап/открывать диалог по точкам. научиться вытаскивать их position
         features: [
           createPoint(34.56, 53.2, 'Объект 1'),
           createPoint(34.59, 53.19, 'Замена дорожного полотна'),
@@ -213,9 +217,6 @@ onMounted(() => {
         );
         if (feature) {
           mapStore.setHoveredObject(feature);
-          // TODO: рисовать попап немного выше, чем прямо под курсором
-          // TODO: BUG если перейти с попапа на сайдбар, не трогая карту, то попап останется висеть
-          // TODO: фантомный попап на точке при создании новой дороги
         } else {
           mapStore.clearHoveredObject();
         }
@@ -241,9 +242,9 @@ watch(isStartingEvent, () => {
 
 const handlerCreateEvent = () => {
   movingEventFeature.value = new Feature(new Point([0, 0]));
-  // TODO: вот в ЭТОМ месте вызывать диалог с информацией по ивенту, передавать туда placedEventFeatures;
-  placedEventFeatures.value = [];
-  mapStore.endEvent();
+  // TODO: сохранение на бэк
+  // placedEventFeatures.value = [];
+  // mapStore.endEvent();
 };
 
 const handlerDiscardEvent = () => {
@@ -266,6 +267,10 @@ watch(
   },
   { deep: true }
 );
+
+watch(isDrawing, () => {
+  mapStore.toggleDrawing(isDrawing.value);
+});
 </script>
 
 <style lang="scss" scoped>
