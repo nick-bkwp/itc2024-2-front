@@ -7,6 +7,11 @@
       :opened="placedEventFeatures.length === 2"
       @save="createRoad"
     />
+    <UpdateEventDialog
+      :opened="!!eventData"
+      :id="eventData"
+      @save="updateEvent"
+    />
     <q-fab
       v-if="!isDrawing && !isStartingEvent"
       class="absolute fab"
@@ -97,6 +102,7 @@ import Point from 'ol/geom/Point';
 import CreateRoadDialog from 'src/components/CreateRoadDialog.vue';
 import CreateEventDialog from 'src/components/CreateEventDialog.vue';
 import getEventsInfo from 'src/api/getEventsInfo';
+import UpdateEventDialog from 'src/components/UpdateEventDialog.vue';
 
 const mapStore = useMapStore();
 const { initMap } = useMap();
@@ -105,6 +111,7 @@ const { createPoint } = usePoint();
 
 const map = ref();
 const roadFeature = ref();
+const eventData = ref(null);
 
 const drawSource = new VectorSource({ wrapX: false });
 const drawLayer = new VectorLayer({
@@ -155,6 +162,11 @@ const createRoad = (data) => {
   console.log(roadFeature.value);
 };
 
+const updateEvent = (data) => {
+  eventData.value = null;
+  // TODO: бэкенд)
+};
+
 onMounted(() => {
   getRoadsData();
   map.value = initMap('map', [vectorLayer, drawLayer, eventLayer]);
@@ -172,6 +184,7 @@ onMounted(() => {
   );
 
   map.value.on('click', (event) => {
+    debugger;
     if (map.value) {
       if (isStartingEvent.value) {
         const finalPosition = movingEventFeature.value
@@ -191,9 +204,15 @@ onMounted(() => {
             return feature;
           }
         );
-
+        debugger;
         if (feature) {
-          mapStore.setSelectedObject(feature);
+          if (feature.get('type') === 'event') {
+            // event.value = feature.get('id');
+            // TODO: достать айди
+            eventData.value = feature;
+          } else {
+            mapStore.setSelectedObject(feature);
+          }
         }
       }
     }
