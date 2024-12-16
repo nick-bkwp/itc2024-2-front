@@ -3,9 +3,10 @@
 Перед нами стояла задача реализовать редактор дорожных сетей. Каждая дорожная сеть может представлять из себя набор ломанных, который содержит в себе определенную паспортную информацию. Помимо этого, на дорогах можно выделять отдельные участки, объявлять их ремонтными, вносить данные ремонтных работ, осуществлять планирование.
 
 Стек на фронтенде:
-[https://img.shields.io/badge/JavaScript-323330?style=for-the-badge&logo=javascript&logoColor=F7DF1E](https://img.shields.io/badge/Vue%20js-35495E?style=for-the-badge&logo=vuedotjs&logoColor=4FC08D)
-https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white
-https://img.shields.io/badge/OpenStreetMap-7EBC6F?style=for-the-badge&logo=OpenStreetMap&logoColor=white
+
+![image]({https://img.shields.io/badge/Vue%20js-35495E?style=for-the-badge&logo=vuedotjs&logoColor=4FC08D})
+![image]({https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white})
+![image]({https://img.shields.io/badge/OpenStreetMap-7EBC6F?style=for-the-badge&logo=OpenStreetMap&logoColor=white})
 
 ## Страницы
 
@@ -21,7 +22,7 @@ https://img.shields.io/badge/OpenStreetMap-7EBC6F?style=for-the-badge&logo=OpenS
 
 - Popup.vue. Попап.
 
- Показывает краткую информацию о дороге, позволяет открыть диалог для редактирования
+ Показывает краткую информацию о дороге или ремонтном мероприятии, позволяет открыть диалог для редактирования
 
 - CreateEventDialog.vue / CreateRoadDialog.vue. Диалоги
 
@@ -34,10 +35,6 @@ https://img.shields.io/badge/OpenStreetMap-7EBC6F?style=for-the-badge&logo=OpenS
 - Chat.vue. Чат
 
 В приложение встроена RAG-система, позволяющая быстро получить консультацию по терминологии, ГОСТам и проч.
-
-_в разработке_
-
-отображает краткую информацию о сущности на карте
 
 ## Хуки
 
